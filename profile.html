@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Stokvel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="dashboard.html">Home</a>
+        <a href="members.html">Members</a>
+        <a href="profile.html">My Profile</a>
+        <a href="transactions.html">Transactions</a>
+        <a href="loans.html">Loans</a>
+        <a href="#" class="logout" onclick="logout()">Logout</a>
+    </div>
+    <div class="container">
+        <h1>My Profile</h1>
+        <div id="profile"></div>
+        <div id="error" class="error"></div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+        const user = getUser();
+
+        async function loadProfile() {
+            try {
+                let endpoint;
+                if (user.role === 'member' && user.memberId) {
+                    endpoint = `/members/${user.memberId}`;
+                } else {
+                    // For non-members, maybe show user details? We'll just show a message.
+                    document.getElementById('profile').innerHTML = `<p>You are logged in as ${user.role}. No member profile linked.</p>`;
+                    return;
+                }
+                const profile = await apiRequest(endpoint);
+                document.getElementById('profile').innerHTML = `<pre>${JSON.stringify(profile, null, 2)}</pre>`;
+            } catch (err) {
+                document.getElementById('error').textContent = err.message;
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

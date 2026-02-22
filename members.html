@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members - Stokvel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="dashboard.html">Home</a>
+        <a href="members.html">Members</a>
+        <a href="profile.html">My Profile</a>
+        <a href="transactions.html">Transactions</a>
+        <a href="loans.html">Loans</a>
+        <a href="#" class="logout" onclick="logout()">Logout</a>
+    </div>
+    <div class="container">
+        <h1>Members</h1>
+        <div id="members-list"></div>
+        <div id="error" class="error"></div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        requireAuth();
+        const role = getUserRole();
+
+        async function loadMembers() {
+            try {
+                // If member, get own data; if admin/treasurer/auditor, get all
+                const endpoint = (role === 'member') ? `/members/${getUser().memberId}` : '/members';
+                const members = await apiRequest(endpoint);
+                
+                const container = document.getElementById('members-list');
+                if (Array.isArray(members)) {
+                    // Show table of all members
+                    let html = '<table><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th><th>Status</th></tr>';
+                    members.forEach(m => {
+                        html += `<tr>
+                            <td>${m.id}</td>
+                            <td>${m.name}</td>
+                            <td>${m.phone || ''}</td>
+                            <td>${m.currentBalance}</td>
+                            <td>${m.status}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    container.innerHTML = html;
+                } else {
+                    // Single member object
+                    container.innerHTML = `<pre>${JSON.stringify(members, null, 2)}</pre>`;
+                }
+            } catch (err) {
+                document.getElementById('error').textContent = err.message;
+            }
+        }
+
+        loadMembers();
+    </script>
+</body>
+</html>

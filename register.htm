@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Stokvel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role:</label>
+                <select id="role">
+                    <option value="member">Member</option>
+                    <option value="admin">Admin</option>
+                    <option value="treasurer">Treasurer</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="memberId">Member ID (if role is member):</label>
+                <input type="number" id="memberId">
+            </div>
+            <div id="error" class="error"></div>
+            <button type="submit" class="btn">Register</button>
+            <p>Already have an account? <a href="login.html">Login</a></p>
+        </form>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const memberId = document.getElementById('memberId').value || null;
+
+            const errorDiv = document.getElementById('error');
+
+            try {
+                const response = await fetch('https://estokvel-1.onrender.com/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role, memberId })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Registration failed');
+                }
+
+                alert('Registration successful! Please login.');
+                window.location.href = 'login.html';
+            } catch (err) {
+                errorDiv.textContent = err.message;
+            }
+        });
+    </script>
+</body>
+</html>

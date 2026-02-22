@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Stokvel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="dashboard.html">Home</a>
+        <a href="members.html">Members</a>
+        <a href="profile.html">My Profile</a>
+        <a href="transactions.html">Transactions</a>
+        <a href="loans.html">Loans</a>
+        <a href="#" class="logout" onclick="logout()">Logout</a>
+    </div>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <div id="welcome"></div>
+        <p>Welcome to your Stokvel management dashboard. Use the navigation above.</p>
+    </div>
+    <script src="js/utils.js"></script>
+    <script>
+        requireAuth();
+        const user = getUser();
+        document.getElementById('welcome').innerHTML = `<h2>Welcome, ${user.name} (${user.role})</h2>`;
+    </script>
+</body>
+</html>
