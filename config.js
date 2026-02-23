@@ -1,2 +1,2 @@
 // config.js
-const BACKEND_URL = 'https://your-app.onrender.com'; // your Render URL
+const BACKEND_URL = 'https://estokvel-1.onrender.com'; // your Render URL
