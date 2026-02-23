@@ -40,27 +40,43 @@
             <p>Already have an account? <a href="login.html">Login</a></p>
         </form>
     </div>
-   <script type="module">
-    import { register } from './js/api.js';
 
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
-        const memberId = document.getElementById('memberId').value || null;
+    <script type="module">
+        console.log('🚀 Register script started');
 
-        const errorDiv = document.getElementById('error');
+        import { register } from './js/api.js';
+        console.log('✅ Import successful');
 
-        try {
-            await register({ name, email, password, role, memberId });
-            alert('Registration successful! Please login.');
-            window.location.href = 'login.html';
-        } catch (err) {
-            errorDiv.textContent = err.message;
-        }
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM fully loaded');
+            const form = document.getElementById('registerForm');
+            console.log('🔍 Form element:', form);
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log('📤 Form submitted, preventDefault called');
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+                const memberId = document.getElementById('memberId').value || null;
+
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = ''; // clear previous errors
+
+                try {
+                    console.log('📦 Sending registration data:', { name, email, role, memberId });
+                    await register({ name, email, password, role, memberId });
+                    console.log('✅ Registration successful');
+                    alert('Registration successful! Please login.');
+                    window.location.href = 'login.html';
+                } catch (err) {
+                    console.error('❌ Registration error:', err);
+                    errorDiv.textContent = err.message;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
