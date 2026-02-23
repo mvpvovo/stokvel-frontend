@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Stokvel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="dashboard.html">Home</a>
+        <a href="members.html">Members</a>
+        <a href="profile.html">My Profile</a>
+        <a href="transactions.html">Transactions</a>
+        <a href="loans.html">Loans</a>
+        <a href="#" id="logoutLink" class="logout">Logout</a>
+    </div>
+    <div class="container">
+        <h1>My Transactions</h1>
+        <div id="transactions-list"></div>
+        <div id="error" class="error"></div>
+    </div>
+    <script type="module">
+        import { requireAuth, getUser, logout } from './js/utils.js';
+        import { getMemberStatement } from './js/api.js';
+
+        requireAuth();
+        const user = getUser();
+
+        async function loadTransactions() {
+            try {
+                if (user.role === 'member' && user.memberId) {
+                    const data = await getMemberStatement(user.memberId);
+                    document.getElementById('transactions-list').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    document.getElementById('transactions-list').innerHTML = '<p>Transaction view for non-members coming soon.</p>';
+                }
+            } catch (err) {
+                document.getElementById('error').textContent = err.message;
+            }
+        }
+
+        loadTransactions();
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    </script>
+</body>
+</html>
