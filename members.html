@@ -20,43 +20,46 @@
         <div id="members-list"></div>
         <div id="error" class="error"></div>
     </div>
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
-    <script>
-        requireAuth();
-        const role = getUserRole();
+<script type="module">
+    import { getMembers, getMember } from './js/api.js';
+    import { getUser, getUserRole, requireAuth } from './js/utils.js';
 
-        async function loadMembers() {
-            try {
-                // If member, get own data; if admin/treasurer/auditor, get all
-                const endpoint = (role === 'member') ? `/members/${getUser().memberId}` : '/members';
-                const members = await apiRequest(endpoint);
-                
-                const container = document.getElementById('members-list');
-                if (Array.isArray(members)) {
-                    // Show table of all members
-                    let html = '<table><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th><th>Status</th></tr>';
-                    members.forEach(m => {
-                        html += `<tr>
-                            <td>${m.id}</td>
-                            <td>${m.name}</td>
-                            <td>${m.phone || ''}</td>
-                            <td>${m.currentBalance}</td>
-                            <td>${m.status}</td>
-                        </tr>`;
-                    });
-                    html += '</table>';
-                    container.innerHTML = html;
-                } else {
-                    // Single member object
-                    container.innerHTML = `<pre>${JSON.stringify(members, null, 2)}</pre>`;
-                }
-            } catch (err) {
-                document.getElementById('error').textContent = err.message;
+    requireAuth();
+    const role = getUserRole();
+    const user = getUser();
+
+    async function loadMembers() {
+        try {
+            let members;
+            if (role === 'member' && user.memberId) {
+                members = await getMember(user.memberId);
+            } else {
+                members = await getMembers();
             }
-        }
 
-        loadMembers();
-    </script>
+            const container = document.getElementById('members-list');
+            if (Array.isArray(members)) {
+                let html = '<table><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th><th>Status</th></tr>';
+                members.forEach(m => {
+                    html += `<tr>
+                        <td>${m.id}</td>
+                        <td>${m.name}</td>
+                        <td>${m.phone || ''}</td>
+                        <td>${m.currentBalance}</td>
+                        <td>${m.status}</td>
+                    </tr>`;
+                });
+                html += '</table>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `<pre>${JSON.stringify(members, null, 2)}</pre>`;
+            }
+        } catch (err) {
+            document.getElementById('error').textContent = err.message;
+        }
+    }
+
+    loadMembers();
+</script>
 </body>
 </html>
