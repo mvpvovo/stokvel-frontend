@@ -13,18 +13,30 @@
         <a href="profile.html">My Profile</a>
         <a href="transactions.html">Transactions</a>
         <a href="loans.html">Loans</a>
-        <a href="#" class="logout" onclick="logout()">Logout</a>
+        <a href="#" id="logoutLink" class="logout">Logout</a>
     </div>
     <div class="container">
         <h1>Dashboard</h1>
         <div id="welcome"></div>
         <p>Welcome to your Stokvel management dashboard. Use the navigation above.</p>
     </div>
-    <script src="js/utils.js"></script>
-    <script>
+
+    <!-- Single module script -->
+    <script type="module">
+        import { requireAuth, getUser, logout } from './js/utils.js';
+
+        // Protect this page – redirect to login if not authenticated
         requireAuth();
+
+        // Display welcome message
         const user = getUser();
         document.getElementById('welcome').innerHTML = `<h2>Welcome, ${user.name} (${user.role})</h2>`;
+
+        // Attach logout event to the link
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
     </script>
 </body>
 </html>
