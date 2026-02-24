@@ -42,9 +42,12 @@ async function apiRequest(endpoint, method = 'GET', body = null, requiresAuth = 
             window.location.href = '/login.html';
         }
         throw new Error(data.error || 'Request failed');
-    }
+     }
 
     return data;
+    export async function apiRequest(endpoint, method = 'GET', body = null, requiresAuth = true) {
+    // ... existing code
+
 }
 
 // ==================== AUTH ====================
